@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "Projectile.h"
 #include "UE5_communityCharacter.generated.h"
 
 
@@ -20,7 +21,7 @@ class AUE5_communityCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
-	
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
@@ -37,23 +38,33 @@ class AUE5_communityCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess="true"))
+	class UInputAction* FireAction;
+
 public:
 	AUE5_communityCharacter();
-	
+
+	// Gun muzzle offset from the camera location.
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	FVector MuzzleOffset;
 
 protected:
-
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
+	// Projectile class to spawn.
+	UPROPERTY(EditDefaultsOnly, Category = Projectile)
+	TSubclassOf<class AProjectile> ProjectileClass;
+
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-			
+
+	void Fire(const FInputActionValue& Value);
 
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 	// To add mapping context
 	virtual void BeginPlay();
 
@@ -63,4 +74,3 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 };
-
